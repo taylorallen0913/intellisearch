@@ -16,6 +16,7 @@ app.use(cors());
 
 app.use(fileUpload());
 
+fs.mkdirSync('./client/public/results');
 fs.mkdirSync('./client/public/uploads');
 fs.mkdirSync('./client/public/uploads/images');
 
@@ -86,7 +87,7 @@ downloadFile = (fileName, folder) => {
       Key: folder + "images/" + fileName
     };
     var file = require("fs").createWriteStream(
-      "./client/public/" + folder + "-matches/" + fileName
+      "./client/public/results/" + folder + "-matches/" + fileName
     );
     return new Promise(function(resolve, reject) {
       resolve(
@@ -108,7 +109,7 @@ downloadFile = (fileName, folder) => {
 };
 
 compareAll = async (folder, frames) => {
-  let dir = "./client/public/" + folder + "-matches";
+  let dir = "./client/public/results/" + folder + "-matches";
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
