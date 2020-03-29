@@ -16,6 +16,9 @@ app.use(cors());
 
 app.use(fileUpload());
 
+fs.mkdirSync('./client/public/uploads');
+fs.mkdirSync('./client/public/uploads/images');
+
 AWS.config.update({
   accessKeyId: ID,
   secretAccessKey: SECRET,
