@@ -16,9 +16,9 @@ app.use(cors());
 
 app.use(fileUpload());
 
-fs.mkdirSync('./client/public/results');
-fs.mkdirSync('./client/public/uploads');
-fs.mkdirSync('./client/public/uploads/images');
+//fs.mkdirSync('./client/public/results');
+//fs.mkdirSync('./client/public/uploads');
+//fs.mkdirSync('./client/public/uploads/images');
 
 AWS.config.update({
   accessKeyId: ID,
@@ -198,5 +198,16 @@ app.post("/upload-image", (req, res) => {
     
   });
 });
+
+app.get("/get-images", async (req, res) => {
+  const path = "./client/public/results/";
+  let itemList = [];
+  fs.readdir(path, (err, items) => {
+    items.forEach(item => {
+      itemList.push(item);
+    })
+  })
+  res.send(itemList);
+})
 
 app.listen(5000, () => console.log("Server Started..."));
