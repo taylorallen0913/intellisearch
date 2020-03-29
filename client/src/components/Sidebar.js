@@ -17,6 +17,11 @@ export default class Sidebar extends Component {
               <a href="/upload">Upload</a>
             </li>
           </Link>
+          <Link to="/results">
+            <li>
+              <a href="/results">Results</a>
+            </li>
+          </Link>
         </ul>
       </div>
     );

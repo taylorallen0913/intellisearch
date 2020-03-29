@@ -4,10 +4,9 @@ import axios from "axios";
 
 const FileUpload = props => {
   let { type } = props;
-  type === "dataset" ? type = "a video" : type = "an image";
+  type === "dataset" ? (type = "a video") : (type = "an image");
   const [file, setFile] = useState("");
   const [filename, setFilename] = useState("Choose " + type);
-  const [uploadedFile, setUploadedFile] = useState({});
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
   const onChange = e => {
@@ -21,7 +20,11 @@ const FileUpload = props => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:5000/upload", formData, {
+      let apiToCall;
+      type === "dataset"
+        ? (apiToCall = "http://localhost:5000/upload-video")
+        : (apiToCall = "http://localhost:5000/upload-image");
+      const res = await axios.post(apiToCall, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         },
@@ -38,8 +41,6 @@ const FileUpload = props => {
       });
 
       const { fileName, filePath } = res.data;
-
-      setUploadedFile({ fileName, filePath });
 
       console.log("File Uploaded");
     } catch (err) {
@@ -61,7 +62,11 @@ const FileUpload = props => {
             id="customFile"
             onChange={onChange}
           />
-          <label className="custom-file-label" htmlFor="customFile" style={{width: "30%", marginLeft: "34%"}}>
+          <label
+            className="custom-file-label"
+            htmlFor="customFile"
+            style={{ width: "30%", marginLeft: "34%" }}
+          >
             {filename}
           </label>
         </div>
@@ -72,17 +77,9 @@ const FileUpload = props => {
           type="submit"
           value="Upload"
           className="btn btn-primary btn-lg mt-4 text-center"
-          style={{ marginLeft: "47%" }}
+          style={{ marginLeft: "45%" }}
         />
       </form>
-      {uploadedFile ? (
-        <div className="row mt-5">
-          <div className="col-md-6 m-auto">
-            <h3 className="text-center">{uploadedFile.fileName}</h3>
-            <img style={{ width: "100%" }} src={uploadedFile.filePath} alt="" />
-          </div>
-        </div>
-      ) : null}
     </Fragment>
   );
 };

@@ -31,6 +31,7 @@ getFrames = async () => {
 };
 
 doExtractFrames = async (vidName, framesPerSec) => {
+  const folder = vidName.replace(/\.[^/.]+$/, "");
   const inputPath = "./client/public/uploads/" + vidName;
   const outputPath = "./client/public/uploads/images/screenshot-%d.jpeg";
   await extractFrames({
@@ -38,27 +39,29 @@ doExtractFrames = async (vidName, framesPerSec) => {
     output: outputPath,
     fps: framesPerSec
   });
-  await uploadAll();
+  await uploadAll(folder);
 };
 
-uploadAll = async () => {
+uploadAll = async folder => {
   console.log("Uploading all...");
   const frames = await getFrames();
   for (let i = 1; i < frames + 1; i++) {
     var fileName = "./client/public/uploads/images/screenshot-" + i + ".jpeg";
+    var shortName = folder + "images/screenshot-" + i + ".jpeg";
     console.log(fileName);
-    await uploadFile(fileName);
+    await uploadFile(fileName, shortName);
   }
+  compareAll(folder, frames);
 };
 
-uploadFile = fileName => {
+uploadFile = (fileName, shortName) => {
   // Read content from the file
   const fileContent = fs.readFileSync(fileName);
 
   // Setting up S3 upload parameters
   const params = {
     Bucket: BUCKET,
-    Key: fileName, // File name you want to save as in S3
+    Key: shortName, // File name you want to save as in S3
     Body: fileContent
   };
 
@@ -71,8 +74,79 @@ uploadFile = fileName => {
   });
 };
 
-// Upload Endpoint
-app.post("/upload", (req, res) => {
+downloadFile = (fileName, folder) => {
+  try {
+    const params = {
+      Bucket: BUCKET,
+      Key: folder + "images/" + fileName
+    };
+    var file = require("fs").createWriteStream(
+      "./client/public/" + folder + "-matches/" + fileName
+    );
+    return new Promise(function(resolve, reject) {
+      resolve(
+        new AWS.S3({
+          apiVersion: "2006-03-01"
+        })
+          .getObject(params)
+          .createReadStream()
+          .pipe(file)
+      );
+    });
+  } catch (error) {
+    console.error(
+      "Error while getting file from s3 bucket.",
+      error,
+      error.stack
+    );
+  }
+};
+
+compareAll = async (folder, frames) => {
+  let dir = "./client/public/" + folder + "-matches";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  for (let i = 1; i <= frames; i++) {
+    let name = "screenshot-" + i + ".jpeg";
+    const client = new AWS.Rekognition();
+    const params = {
+      SourceImage: {
+        S3Object: {
+          Bucket: BUCKET,
+          Name: "taylor.jpg"
+        }
+      },
+      TargetImage: {
+        S3Object: {
+          Bucket: BUCKET,
+          Name: folder + "images/" + name
+        }
+      },
+      SimilarityThreshold: 70
+    };
+    client.compareFaces(params, function(err, response) {
+      if (err) {
+        //console.log(err, err.stack); // an error occurred
+      } else {
+        response.FaceMatches.forEach(data => {
+          let position = data.Face.BoundingBox;
+          let similarity = data.Similarity;
+          console.log(
+            `The face in photo ${name} matches with ${similarity}% confidence`
+          );
+          downloadFile(name, folder);
+          //moveFile(name);
+          //matchList.push(params.TargetImage.S3Object.Name);
+        }); // for response.faceDetails
+      } // if
+    });
+  }
+};
+
+// Upload Video
+app.post("/upload-video", (req, res) => {
+  console.log("VIDEO");
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
@@ -90,6 +164,31 @@ app.post("/upload", (req, res) => {
     }, 1000);
 
     res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+  });
+});
+
+// Upload Image
+app.post("/upload-image", (req, res) => {
+  console.log("IMAGE");
+  if (req.files === null) {
+    return res.status(400).json({ msg: "No file uploaded" });
+  }
+
+  const file = req.files.file;
+
+  // Do what you were going to do with the image in this function
+
+  file.mv(`${__dirname}/client/public/uploads/${file.name}`, err => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send(err);
+    }
+
+    let path = './client/public/uploads/' + file.name;
+    uploadFile(path, file.name);
+
+    res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+    
   });
 });
 

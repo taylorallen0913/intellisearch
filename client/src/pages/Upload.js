@@ -4,19 +4,17 @@ import FileUpload from "../components/FileUpload";
 export default class Upload extends Component {
   constructor() {
     super();
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
-    
     return (
-      <div>
+      <div className="container">
         <h1 className="subtitle">Upload</h1>
         <h1 className="info-text">Update your dataset</h1>
-        <FileUpload type="dataset"/>
+        <FileUpload type="dataset" />
         <h1 className="info-text">Update your reference images</h1>
-        <FileUpload type="reference"/>
+        <FileUpload type="reference" />
       </div>
     );
   }
