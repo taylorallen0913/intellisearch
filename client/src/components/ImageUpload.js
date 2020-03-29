@@ -18,7 +18,7 @@ const ImageUpload = props => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:5000/upload-image", formData, {
+      await axios.post("http://localhost:5000/upload-image", formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         },
