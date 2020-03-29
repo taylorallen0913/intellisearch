@@ -200,11 +200,11 @@ app.post("/upload-image", (req, res) => {
 });
 
 app.get("/get-images", async (req, res) => {
-  const path = "./client/src/results/";
+  const path = "./client/src/results/vid-matches/";
+ 
   fs.readdir(path, (err, items) => {
-    fs.readdir(path + '/' + items[0], (err, items) => {
-      res.send(items);
-    })
+    console.log(items)
+    res.send(items);
   })
 })
 
