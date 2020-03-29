@@ -13,10 +13,13 @@
     "aws-sdk": "^2.648.0",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
+    "list-react-files": "^0.2.0",
+    "rc-texty": "^0.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-dropzone": "^10.2.2",
     "react-dropzone-uploader": "^2.11.0",
+    "react-image-gallery": "^1.0.7",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1"
   },
