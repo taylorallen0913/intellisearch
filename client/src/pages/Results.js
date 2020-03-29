@@ -19,7 +19,7 @@ export default class Results extends Component {
 
   getImages = async () => {
     const basePath = "../../public/results/";
-    listReactFiles(basePath).then(files => console.log(files))
+    //listReactFiles(basePath).then(files => console.log(files))
     this.setState({ imagesLoaded: true });
   };
 

@@ -86,3 +86,10 @@ body {
   font-size: 2em;
   margin: 2em 1em 1em 1em;
 }
+
+.subtext {
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  font-size: 0.5em;
+  margin: 0.5em;
+}
