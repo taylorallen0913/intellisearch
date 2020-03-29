@@ -16,9 +16,9 @@ app.use(cors());
 
 app.use(fileUpload());
 
-//fs.mkdirSync('./client/public/results');
-//fs.mkdirSync('./client/public/uploads');
-//fs.mkdirSync('./client/public/uploads/images');
+//fs.mkdirSync('./client/src/results');
+//fs.mkdirSync('./client/src/uploads');
+//fs.mkdirSync('./client/src/uploads/images');
 
 AWS.config.update({
   accessKeyId: ID,
@@ -32,14 +32,14 @@ let imageName;
 
 getFrames = async () => {
   console.log("getting frames...");
-  const dir = "./client/public/uploads/images";
+  const dir = "./client/src/uploads/images";
   return fs.readdirSync(dir).length - 1;
 };
 
 doExtractFrames = async (vidName, framesPerSec) => {
   const folder = vidName.replace(/\.[^/.]+$/, "");
-  const inputPath = "./client/public/uploads/" + vidName;
-  const outputPath = "./client/public/uploads/images/screenshot-%d.jpeg";
+  const inputPath = "./client/src/uploads/" + vidName;
+  const outputPath = "./client/src/uploads/images/screenshot-%d.jpeg";
   await extractFrames({
     input: inputPath,
     output: outputPath,
@@ -52,7 +52,7 @@ uploadAll = async folder => {
   console.log("Uploading all...");
   const frames = await getFrames();
   for (let i = 1; i < frames + 1; i++) {
-    var fileName = "./client/public/uploads/images/screenshot-" + i + ".jpeg";
+    var fileName = "./client/src/uploads/images/screenshot-" + i + ".jpeg";
     var shortName = folder + "images/screenshot-" + i + ".jpeg";
     console.log(fileName);
     await uploadFile(fileName, shortName);
@@ -87,7 +87,7 @@ downloadFile = (fileName, folder) => {
       Key: folder + "images/" + fileName
     };
     var file = require("fs").createWriteStream(
-      "./client/public/results/" + folder + "-matches/" + fileName
+      "./client/src/results/" + folder + "-matches/" + fileName
     );
     return new Promise(function(resolve, reject) {
       resolve(
@@ -109,7 +109,7 @@ downloadFile = (fileName, folder) => {
 };
 
 compareAll = async (folder, frames) => {
-  let dir = "./client/public/results/" + folder + "-matches";
+  let dir = "./client/src/results/" + folder + "-matches";
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
@@ -159,7 +159,7 @@ app.post("/upload-video", (req, res) => {
 
   const file = req.files.file;
 
-  file.mv(`${__dirname}/client/public/uploads/${file.name}`, err => {
+  file.mv(`${__dirname}/client/src/uploads/${file.name}`, err => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);
@@ -184,14 +184,14 @@ app.post("/upload-image", (req, res) => {
 
   // Do what you were going to do with the image in this function
 
-  file.mv(`${__dirname}/client/public/uploads/${file.name}`, err => {
+  file.mv(`${__dirname}/client/src/uploads/${file.name}`, err => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);
     }
 
     imageName = file.name;
-    let path = './client/public/uploads/' + file.name;
+    let path = './client/src/uploads/' + file.name;
     uploadFile(path, file.name);
 
     res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
@@ -200,14 +200,12 @@ app.post("/upload-image", (req, res) => {
 });
 
 app.get("/get-images", async (req, res) => {
-  const path = "./client/public/results/";
-  let itemList = [];
+  const path = "./client/src/results/";
   fs.readdir(path, (err, items) => {
-    items.forEach(item => {
-      itemList.push(item);
+    fs.readdir(path + '/' + items[0], (err, items) => {
+      res.send(items);
     })
   })
-  res.send(itemList);
 })
 
 app.listen(5000, () => console.log("Server Started..."));

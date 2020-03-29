@@ -29,6 +29,7 @@
     "ffmpeg-extract-frames": "^2.0.2",
     "file-type": "^14.1.4",
     "react-dropzone-s3-uploader": "^1.1.0",
+    "react-grid-gallery": "^0.5.5",
     "react-s3-uploader": "^4.9.2"
   },
   "devDependencies": {
