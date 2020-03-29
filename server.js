@@ -152,7 +152,8 @@ compareAll = async (folder, frames) => {
 
 // Upload Video
 app.post("/upload-video", (req, res) => {
-  console.log("VIDEO");
+  console.log("Splitting videos into frames and compressing...")
+  console.log("Video uploading starting...");
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
@@ -175,7 +176,7 @@ app.post("/upload-video", (req, res) => {
 
 // Upload Image
 app.post("/upload-image", (req, res) => {
-  console.log("IMAGES");
+  console.log("Image successfully uploaded.");
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
