@@ -13,7 +13,10 @@ export default class Upload extends Component {
     return (
       <div>
         <h1 className="subtitle">Upload</h1>
-        <FileUpload />
+        <h1 className="info-text">Update your dataset</h1>
+        <FileUpload type="dataset"/>
+        <h1 className="info-text">Update your reference images</h1>
+        <FileUpload type="reference"/>
       </div>
     );
   }

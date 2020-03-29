@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 const Progress = ({ percentage }) => {
   return (
-    <div className='progress'>
+    <div className='progress' style={{width: "70%", marginLeft: "14%"}}>
       <div
         className='progress-bar progress-bar-striped bg-success'
         role='progressbar'
-        style={{ width: `${percentage}%` }}
-      >
+        style={{ width: `${percentage}%`}}  
+        >
         {percentage}%
       </div>
     </div>

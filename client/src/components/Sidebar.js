@@ -9,12 +9,12 @@ export default class Sidebar extends Component {
         <ul>
           <Link to="/">
             <li>
-              <a>Home</a>
+              <a href="/">Home</a>
             </li>
           </Link>
           <Link to="/upload">
             <li>
-              <a>Upload</a>
+              <a href="/upload">Upload</a>
             </li>
           </Link>
         </ul>

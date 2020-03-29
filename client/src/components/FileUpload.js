@@ -1,10 +1,12 @@
-import React, { Fragment, useState } from 'react';
-import Progress from './Progress';
-import axios from 'axios';
+import React, { Fragment, useState } from "react";
+import Progress from "./Progress";
+import axios from "axios";
 
-const FileUpload = () => {
-  const [file, setFile] = useState('');
-  const [filename, setFilename] = useState('Choose File');
+const FileUpload = props => {
+  let { type } = props;
+  type === "dataset" ? type = "a video" : type = "an image";
+  const [file, setFile] = useState("");
+  const [filename, setFilename] = useState("Choose " + type);
   const [uploadedFile, setUploadedFile] = useState({});
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
@@ -16,12 +18,12 @@ const FileUpload = () => {
   const onSubmit = async e => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const res = await axios.post('http://localhost:5000/upload', formData, {
+      const res = await axios.post("http://localhost:5000/upload", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          "Content-Type": "multipart/form-data"
         },
         onUploadProgress: progressEvent => {
           setUploadPercentage(
@@ -39,10 +41,10 @@ const FileUpload = () => {
 
       setUploadedFile({ fileName, filePath });
 
-      console.log('File Uploaded');
+      console.log("File Uploaded");
     } catch (err) {
       if (err.response.status === 500) {
-        console.log('There was a problem with the server');
+        console.log("There was a problem with the server");
       } else {
         console.log(err.response.data.msg);
       }
@@ -52,14 +54,14 @@ const FileUpload = () => {
   return (
     <Fragment>
       <form onSubmit={onSubmit}>
-        <div className='custom-file mb-4'>
+        <div className="custom-file mb-4">
           <input
-            type='file'
-            className='custom-file-input'
-            id='customFile'
+            type="file"
+            className="custom-file-input"
+            id="customFile"
             onChange={onChange}
           />
-          <label className='custom-file-label' htmlFor='customFile'>
+          <label className="custom-file-label" htmlFor="customFile" style={{width: "30%", marginLeft: "34%"}}>
             {filename}
           </label>
         </div>
@@ -67,16 +69,17 @@ const FileUpload = () => {
         <Progress percentage={uploadPercentage} />
 
         <input
-          type='submit'
-          value='Upload'
-          className='btn btn-primary btn-block mt-4'
+          type="submit"
+          value="Upload"
+          className="btn btn-primary btn-lg mt-4 text-center"
+          style={{ marginLeft: "47%" }}
         />
       </form>
       {uploadedFile ? (
-        <div className='row mt-5'>
-          <div className='col-md-6 m-auto'>
-            <h3 className='text-center'>{uploadedFile.fileName}</h3>
-            <img style={{ width: '100%' }} src={uploadedFile.filePath} alt='' />
+        <div className="row mt-5">
+          <div className="col-md-6 m-auto">
+            <h3 className="text-center">{uploadedFile.fileName}</h3>
+            <img style={{ width: "100%" }} src={uploadedFile.filePath} alt="" />
           </div>
         </div>
       ) : null}
