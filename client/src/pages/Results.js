@@ -76,7 +76,10 @@ export default class Results extends Component {
   render() {
     return (
       <div>
-        {this.state.imagesLoaded ? (
+        {this.state.images.length == 0 ? (
+          <h1>Please be patient as the images load.</h1>
+        ) : null}
+        {this.state.imagesLoaded && this.state.images.length != 0 ? (
           <Gallery images={this.state.images} />
         ) : null}
       </div>
