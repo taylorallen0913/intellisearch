@@ -56,10 +56,10 @@ export default class Results extends Component {
         console.log(res);
         res.data.forEach(item => {
           console.log("../results/vid-matches/" + item);
-          item = "screenshot-1.jpeg"
+          //item = "screenshot-1.jpeg"
           localImages.push({
-            src: "../results/vid-matches/" + item,
-            thumbnail: "../results/vid-matches/" + item,
+            src: require("../results/vid-matches/" + item),
+            thumbnail: require("../results/vid-matches/" + item),
             thumbnailWidth: 350,
             thumbnailHeight: 250
           });
