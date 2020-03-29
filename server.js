@@ -24,6 +24,8 @@ AWS.config.update({
 
 const s3 = new AWS.S3({});
 
+let imageName;
+
 getFrames = async () => {
   console.log("getting frames...");
   const dir = "./client/public/uploads/images";
@@ -114,7 +116,7 @@ compareAll = async (folder, frames) => {
       SourceImage: {
         S3Object: {
           Bucket: BUCKET,
-          Name: "taylor.jpg"
+          Name: imageName
         }
       },
       TargetImage: {
@@ -169,7 +171,7 @@ app.post("/upload-video", (req, res) => {
 
 // Upload Image
 app.post("/upload-image", (req, res) => {
-  console.log("IMAGE");
+  console.log("IMAGES");
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
@@ -184,6 +186,7 @@ app.post("/upload-image", (req, res) => {
       return res.status(500).send(err);
     }
 
+    imageName = file.name;
     let path = './client/public/uploads/' + file.name;
     uploadFile(path, file.name);
 

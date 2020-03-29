@@ -2,11 +2,9 @@ import React, { Fragment, useState } from "react";
 import Progress from "./Progress";
 import axios from "axios";
 
-const FileUpload = props => {
-  let { type } = props;
-  type === "dataset" ? (type = "a video") : (type = "an image");
+const ImageUpload = props => {
   const [file, setFile] = useState("");
-  const [filename, setFilename] = useState("Choose " + type);
+  const [filename, setFilename] = useState("Choose an image");
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
   const onChange = e => {
@@ -20,11 +18,7 @@ const FileUpload = props => {
     formData.append("file", file);
 
     try {
-      let apiToCall;
-      type === "dataset"
-        ? (apiToCall = "http://localhost:5000/upload-video")
-        : (apiToCall = "http://localhost:5000/upload-image");
-      const res = await axios.post(apiToCall, formData, {
+      const res = await axios.post("http://localhost:5000/upload-image", formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         },
@@ -40,7 +34,6 @@ const FileUpload = props => {
         }
       });
 
-      const { fileName, filePath } = res.data;
 
       console.log("File Uploaded");
     } catch (err) {
@@ -84,4 +77,4 @@ const FileUpload = props => {
   );
 };
 
-export default FileUpload;
+export default ImageUpload;
