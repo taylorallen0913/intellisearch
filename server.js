@@ -7,8 +7,8 @@ const cors = require("cors");
 const app = express();
 const fs = require("fs");
 
-const ID = "AKIAJZWJTDZWPTHBFAGQ";
-const SECRET = "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";
+const ID = "";
+const SECRET = "";
 const REGION = "us-west-1";
 const BUCKET = "intellisearch";
 
@@ -16,9 +16,6 @@ app.use(cors());
 
 app.use(fileUpload());
 
-//fs.mkdirSync('./client/src/results');
-//fs.mkdirSync('./client/src/uploads');
-//fs.mkdirSync('./client/src/uploads/images');
 
 AWS.config.update({
   accessKeyId: ID,
