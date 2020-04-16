@@ -26,6 +26,14 @@ cd expedition-hacks-project
 npm install && cd client && npm install && cd ..
 ```
 
+#### Add .env file with your AWS config into the root directory
+```
+AWS_ID=
+AWS_SECRET=
+AWS_REGION=
+AWS_BUCKET_NAME=
+```
+
 #### Run the development server
 ```
 npm run dev
