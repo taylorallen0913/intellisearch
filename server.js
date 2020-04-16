@@ -6,6 +6,7 @@ const extractFrames = require("ffmpeg-extract-frames");
 const cors = require("cors");
 const app = express();
 const fs = require("fs");
+const path = require("path")
 
 const ID = process.env.AWS_ID;
 const SECRET = process.env.AWS_SECRET;
@@ -15,7 +16,6 @@ const BUCKET = process.env.AWS_BUCKET_NAME;
 app.use(cors());
 
 app.use(fileUpload());
-
 
 AWS.config.update({
   accessKeyId: ID,
@@ -35,7 +35,7 @@ getFrames = async () => {
 
 doExtractFrames = async (vidName, framesPerSec) => {
   const folder = vidName.replace(/\.[^/.]+$/, "");
-  const inputPath = "./client/src/uploads/" + vidName;
+  const inputPath = "./client/src/uploads/vid.mp4";
   const outputPath = "./client/src/uploads/images/screenshot-%d.jpeg";
   await extractFrames({
     input: inputPath,
@@ -69,7 +69,7 @@ uploadFile = (fileName, shortName) => {
   };
 
   // Uploading files to the bucket
-  s3.upload(params, function(err, data) {
+  s3.upload(params, function (err, data) {
     if (err) {
       throw err;
     }
@@ -86,7 +86,7 @@ downloadFile = (fileName, folder) => {
     var file = require("fs").createWriteStream(
       "./client/src/results/" + folder + "-matches/" + fileName
     );
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       resolve(
         new AWS.S3({
           apiVersion: "2006-03-01"
@@ -128,9 +128,9 @@ compareAll = async (folder, frames) => {
       },
       SimilarityThreshold: 70
     };
-    client.compareFaces(params, function(err, response) {
+    client.compareFaces(params, function (err, response) {
       if (err) {
-        //console.log(err, err.stack); // an error occurred
+        console.log(err)
       } else {
         response.FaceMatches.forEach(data => {
           let position = data.Face.BoundingBox;
@@ -139,13 +139,12 @@ compareAll = async (folder, frames) => {
             `The face in photo ${name} matches with ${similarity}% confidence`
           );
           downloadFile(name, folder);
-          //moveFile(name);
-          //matchList.push(params.TargetImage.S3Object.Name);
-        }); // for response.faceDetails
-      } // if
+        });
+      }
     });
   }
 };
+
 
 // Upload Video
 app.post("/upload-video", (req, res) => {
@@ -156,17 +155,17 @@ app.post("/upload-video", (req, res) => {
   }
 
   const file = req.files.file;
-
-  file.mv(`${__dirname}/client/src/uploads/${file.name}`, err => {
+  file.mv(`${__dirname}/client/src/uploads/vid.mp4`, err => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);
     }
-
+    
     setTimeout(() => {
-      doExtractFrames(file.name, 2);
+      doExtractFrames("vid.mp4", 2);
     }, 1000);
 
+    
     res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
   });
 });
@@ -180,8 +179,6 @@ app.post("/upload-image", (req, res) => {
 
   const file = req.files.file;
 
-  // Do what you were going to do with the image in this function
-
   file.mv(`${__dirname}/client/src/uploads/${file.name}`, err => {
     if (err) {
       console.error(err);
@@ -193,17 +190,31 @@ app.post("/upload-image", (req, res) => {
     uploadFile(path, file.name);
 
     res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
-    
+
   });
 });
 
 app.get("/get-images", async (req, res) => {
   const path = "./client/src/results/vid-matches/";
- 
+
   fs.readdir(path, (err, items) => {
     console.log(items)
     res.send(items);
   })
+})
+
+app.post("/clear-images", async (req, res) => {
+  const directory = './client/src/results/vid-matches';
+
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+
+    for (const file of files) {
+      fs.unlink(path.join(directory, file), err => {
+        if (err) throw err;
+      });
+    }
+  });
 })
 
 app.listen(5000, () => console.log("Server Started..."));

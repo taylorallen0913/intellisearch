@@ -17,14 +17,15 @@ export default class Results extends Component {
   }
 
   refresh = () => {
-    this.getImages();
+    this.setState({ images: [] }, () => {
+      this.getImages();
+    })
   }
 
   clearImages = async () => {
     await axios
       .post("http://localhost:5000/clear-images")
-      .then(res => console.log(res))
-      .catch(err => console.log(err))
+      .then(() => this.refresh())
   }
 
   getImages = async () => {
@@ -52,6 +53,9 @@ export default class Results extends Component {
   render() {
     return (
       <div>
+        {
+          console.log(this.state.images)
+        }
         {this.state.images.length === 0 ? (
           <h1>Please be patient as the images load.</h1>
         ) : null}
@@ -59,8 +63,8 @@ export default class Results extends Component {
           <Gallery images={this.state.images} />
         ) : null}
         <nav class="navbar fixed-bottom navbar-light bg-light" style={{ marginLeft: "200px" }}>
-          <button type="button" class="btn btn-primary btn-lg" onClick={() => this.refresh()}><RefreshIcon fontSize="30px" style={{marginTop: "-2%"}} /> Refresh</button>
-          <button type="button" class="btn btn-primary btn-lg" onClick={() => this.clear()}>Clear Images</button>
+          <button type="button" class="btn btn-primary btn-lg" onClick={() => this.refresh()}><RefreshIcon fontSize="30px" style={{ marginTop: "-2%" }} /> Refresh</button>
+          <button type="button" class="btn btn-primary btn-lg" onClick={() => this.clearImages()}>Clear Images</button>
         </nav>
       </div>
     );
