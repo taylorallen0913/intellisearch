@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Gallery from "react-grid-gallery";
-
+import RefreshIcon from "react-ionicons/lib/IosRefresh"
 const axios = require("axios");
 
 export default class Results extends Component {
@@ -13,7 +13,18 @@ export default class Results extends Component {
   }
 
   componentDidMount() {
+    this.refresh()
+  }
+
+  refresh = () => {
     this.getImages();
+  }
+
+  clearImages = async () => {
+    await axios
+      .post("http://localhost:5000/clear-images")
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
   }
 
   getImages = async () => {
@@ -21,7 +32,6 @@ export default class Results extends Component {
     await axios
       .get("http://localhost:5000/get-images")
       .then(res => {
-        console.log(res);
         res.data.forEach(item => {
           localImages.push({
             src: require("../results/vid-matches/" + item),
@@ -48,6 +58,10 @@ export default class Results extends Component {
         {this.state.imagesLoaded && this.state.images.length !== 0 ? (
           <Gallery images={this.state.images} />
         ) : null}
+        <nav class="navbar fixed-bottom navbar-light bg-light" style={{ marginLeft: "200px" }}>
+          <button type="button" class="btn btn-primary btn-lg" onClick={() => this.refresh()}><RefreshIcon fontSize="30px" style={{marginTop: "-2%"}} /> Refresh</button>
+          <button type="button" class="btn btn-primary btn-lg" onClick={() => this.clear()}>Clear Images</button>
+        </nav>
       </div>
     );
   }

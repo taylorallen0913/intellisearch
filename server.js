@@ -7,10 +7,10 @@ const cors = require("cors");
 const app = express();
 const fs = require("fs");
 
-const ID = "";
-const SECRET = "";
-const REGION = "us-west-1";
-const BUCKET = "intellisearch";
+const ID = process.env.AWS_ID;
+const SECRET = process.env.AWS_SECRET;
+const REGION = process.env.AWS_REGION;
+const BUCKET = process.env.AWS_BUCKET_NAME;
 
 app.use(cors());
 
